@@ -11,7 +11,6 @@ float hasher(char a[])
     for (i = 0; i < n; i++)
     {
         val = val / a[i];
-        printf("%f\t", val);
     }
     return val;
 }
