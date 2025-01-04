@@ -13,11 +13,10 @@ char buffer[80];
 char newline[80];
 int n, d;
 
-struct node *first, *temp, *rlink, *llink;
+struct node *first, *temp;
 
 void insert(char l[])
 {
-
     struct node *newnode = (struct node *)malloc(sizeof(struct node));
     newnode->rlink = NULL;
     newnode->llink = NULL;
@@ -28,14 +27,9 @@ void insert(char l[])
         first = newnode;
         temp = first;
     }
-
     else
     {
-
         newnode->llink = temp;
-
-        //   if (temp->rlink != NULL)
-
         temp->rlink = newnode;
         temp = newnode;
     }
@@ -43,45 +37,43 @@ void insert(char l[])
 
 void insertnew(char nl[], int p)
 {
-
     struct node *newnode = (struct node *)malloc(sizeof(struct node));
     newnode->rlink = NULL;
     newnode->llink = NULL;
-    temp = first;
     strcpy(newnode->line, nl);
 
     if (p == 1)
     {
-        first->llink = newnode;
         newnode->rlink = first;
+        first->llink = newnode;
         first = newnode;
-        temp = first;
     }
-
     else
     {
-        for (int i = 0; i < p - 2; i++)
+        temp = first;
+        for (int i = 0; i < p - 2 && temp != NULL; i++)
         {
             temp = temp->rlink;
         }
+        if (temp == NULL || temp->rlink == NULL)
         {
-            newnode->llink = temp;
-            newnode->rlink = temp->rlink;
-            newnode->rlink->llink = newnode;
-            temp->rlink = newnode;
-            //   p = p + 1;
+            printf("Invalid position\n");
+            free(newnode);
+            return;
         }
+        newnode->llink = temp;
+        newnode->rlink = temp->rlink;
+        temp->rlink->llink = newnode;
+        temp->rlink = newnode;
     }
 }
 
 void display()
 {
-
     struct node *temp1 = first;
     printf("\nDisplaying:\n");
-    while (temp1->rlink != NULL)
+    while (temp1 != NULL)
     {
-
         printf("%s\n", temp1->line);
         temp1 = temp1->rlink;
     }
@@ -89,59 +81,65 @@ void display()
 
 void Delete(int p)
 {
-    int i;
-    // struct node *temp;
     temp = first;
 
     if (p == 1)
     {
-        first = temp->rlink;
-        temp->rlink = NULL;
+        if (first == NULL)
+        {
+            printf("List is empty.\n");
+            return;
+        }
+        first = first->rlink;
+        if (first != NULL)
+            first->llink = NULL;
+        free(temp);
     }
     else
     {
-        for (int i = 0; i <= p - 2; i++)
+        for (int i = 0; i < p - 1 && temp != NULL; i++)
         {
             temp = temp->rlink;
         }
+        if (temp == NULL)
         {
-            temp->llink->rlink = temp->rlink;
-            temp->rlink->llink = temp->llink;
+            printf("Invalid position\n");
+            return;
         }
+        if (temp->llink != NULL)
+            temp->llink->rlink = temp->rlink;
+        if (temp->rlink != NULL)
+            temp->rlink->llink = temp->llink;
+        free(temp);
     }
 }
 
-void main()
+int main()
 {
-
     first = NULL;
     temp = NULL;
-    rlink = NULL;
-    llink = NULL;
 
-    printf("Enter few lines:");
-    scanf(" %s", newline);
-    insert(newline);
-    char end[4] = "end";
-    int flag = 1;
-
-    while (flag != 0)
+    printf("Enter few lines (type 'end' to stop):\n");
+    while (1)
     {
-        scanf(" %s", newline);
-        flag = strcmp(newline, end);
+        scanf(" %[^\n]", newline);
+        if (strcmp(newline, "end") == 0)
+            break;
         insert(newline);
     }
     display();
 
-    printf("\nEnter the Line no. to insert:");
+    printf("\nEnter the Line no. to insert: ");
     scanf("%d", &n);
-    printf("\nEnter the Line to be inserted:");
+    printf("Enter the Line to be inserted: ");
     scanf(" %[^\n]", buffer);
     insertnew(buffer, n);
     display();
 
-    printf("\nEnter the line to be deleted:");
+    printf("\nEnter the line to be deleted: ");
     scanf("%d", &d);
     Delete(d);
     display();
+
+    return 0;
 }
