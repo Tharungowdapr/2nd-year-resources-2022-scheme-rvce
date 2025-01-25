@@ -2,8 +2,7 @@ import requests
 import time
 import Adafruit_DHT
 
-api_key = "1WLLPB39DA23YA51
-"
+api_key = "1WLLPB39DA23YA51"
 
 pin = 4
 sensor = Adafruit_DHT.DHT11
